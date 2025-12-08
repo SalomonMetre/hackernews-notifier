@@ -1,15 +1,31 @@
 #!/usr/bin/env python
 import time
 import feedparser
-from plyer import notification
 from datetime import datetime, timedelta
 from rich.console import Console
 from rich.theme import Theme
 from rich.progress import Progress, SpinnerColumn, BarColumn, TextColumn, TimeRemainingColumn
 
+# Try to import plyer, but don't fail if notifications aren't available
+try:
+    from plyer import notification
+    NOTIFICATIONS_AVAILABLE = True
+except ImportError:
+    NOTIFICATIONS_AVAILABLE = False
+
+# Check if notifications actually work on this system
+if NOTIFICATIONS_AVAILABLE:
+    try:
+        notification.notify(title="Test", message="Test", timeout=1)
+    except NotImplementedError:
+        NOTIFICATIONS_AVAILABLE = False
+    except Exception:
+        # Other errors (like missing dependencies) also mean notifications won't work
+        NOTIFICATIONS_AVAILABLE = False
+
 # --- Configuration ---
 RSS_URL = "https://news.ycombinator.com/rss"
-MAX_POSTS_PER_HOUR = 1   # EXPLICITLY set to 1 per user request
+MAX_POSTS_PER_HOUR = 5   # EXPLICITLY set to 5 per user request
 CHECK_INTERVAL = 300     # 5 minutes
 
 # --- Setup Rich Console ---
@@ -92,12 +108,18 @@ def check_rss_feed():
         link = item.link
         emoji = get_smart_emoji(title)
         
-        # 1. Desktop Notification
-        notification.notify(
-            title=f"{emoji} HN: {title[:40]}...",
-            message=f"{title}\n{link}",
-            timeout=10
-        )
+                # 1. Desktop Notification (if available)
+        if NOTIFICATIONS_AVAILABLE:
+            try:
+                notification.notify(
+                    title=f"{emoji} HN: {title[:40]}...",
+                    message=f"{title}\n{link}",
+                    timeout=10
+                )
+            except Exception:
+                # Silently fail if notification doesn't work
+                console.print("[warning]Desktop notifications not supported on this system.[/warning]")
+                pass
         
         # 2. Terminal Log
         console.print(f"  {emoji} [bold]{title}[/bold]")
@@ -110,6 +132,12 @@ def check_rss_feed():
 def main():
     console.clear()
     console.rule("[bold orange1]HackerNews Watcher[/bold orange1]")
+    
+    # Inform user about notification status
+    if not NOTIFICATIONS_AVAILABLE:
+        console.print("[yellow]⚠️  Desktop notifications are disabled (system dependencies missing)[/yellow]")
+        console.print("[yellow]   Install with: sudo apt install python3-dbus libnotify-bin (Ubuntu/Debian)[/yellow]")
+        console.print()
     
     while True:
         try:
