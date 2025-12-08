@@ -68,6 +68,3 @@ The project uses the following libraries:
   * **`datetime` / `timedelta`**: For precise rate-limiting and tracking of the hourly quota.
 
 <!-- end list -->
-
-```
-```
