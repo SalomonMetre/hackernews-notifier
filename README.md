@@ -19,7 +19,7 @@ You need **Python 3.6+** and the ability to display desktop notifications on you
 ### 1. Clone the Repository
 
 ```bash
-git clone [https://github.com/SalomonMetre/hackernews-notifier.git](https://github.com/SalomonMetre/hackernews-notifier.git)
+git clone https://github.com/SalomonMetre/hackernews-notifier.git
 cd hackernews-notifier
 ````
 
