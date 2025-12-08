@@ -1,126 +1,73 @@
-# 📰 HackerNews Desktop Notifier
+That's a neat and functional script\! Based on your Python code for a Hacker News RSS watcher, here is a succinct, correct, and comprehensive `README.md`.
 
-A lightweight Python script that provides real-time desktop notifications for new posts from the Hacker News RSS feed, helping you stay up-to-date with the latest tech news.
+I've structured it for immediate clarity on GitHub, including setup, usage, and key features.
+
+````markdown
+# 📰 Hacker News Notifier
+
+A highly focused and rate-limited Python script to monitor the Hacker News RSS feed and deliver desktop notifications for new stories. This project is built using `feedparser`, `plyer`, and `rich` for a clean, reliable, and visually appealing console experience.
 
 ## ✨ Features
 
-* **Real-time Notifications:** Get instant desktop alerts for new Hacker News articles.
-* **Customizable Rate Limit:** Set a maximum number of notifications per hour to prevent inundation.
-* **Cross-Platform (Plyer):** Leverages `plyer` for native desktop notifications across different operating systems.
-* **Simple & Efficient:** A compact script designed for minimal resource usage.
+* **Rate-Limited Notifications:** Strictly enforces a maximum number of posts per hour (default is **1**) to prevent notification spam, ensuring you only see the most critical news.
+* **Desktop Alerts:** Delivers cross-platform notifications using `plyer`.
+* **Intelligent Emoji Tagging:** Uses keywords in the post title (e.g., Python, AI, Linux) to prepend a relevant emoji to the notification and console output.
+* **Terminal Integration:** Displays feed updates and status messages directly in the terminal using the beautiful `rich` library, complete with a smooth progress bar animation during the wait interval.
+* **Audible Alerts:** Plays a system bell sound (`\a`) when a new post is found.
 
-## ⚙️ How It Works
-
-The script periodically fetches the Hacker News RSS feed (`https://news.ycombinator.com/rss`), checks for new entries, and sends desktop notifications for unseen posts. It maintains a list of seen links and enforces an hourly notification limit to ensure a smooth user experience.
-
-## 🚀 Installation
+## 🚀 Installation & Setup
 
 ### Prerequisites
 
-* Python 3.x installed on your system.
+You need **Python 3.6+** and the ability to display desktop notifications on your operating system (e.g., `libnotify` on Linux).
 
-### Steps
+### 1. Clone the Repository
 
-1.  **Clone the repository:**
-    ```bash
-    git clone [YOUR_GITHUB_REPO_LINK]
-    cd hackernews-notifier # Or whatever your repository's directory name is
-    ```
+```bash
+git clone [https://github.com/SalomonMetre/hackernews-notifier.git](https://github.com/SalomonMetre/hackernews-notifier.git)
+cd hackernews-notifier
+````
 
-2.  **Install dependencies:**
-    This project requires the `feedparser` and `plyer` libraries.
-    ```bash
-    pip install -r requirements.txt
-    ```
+### 2\. Install Dependencies
+
+The script relies on a few key Python libraries:
+
+```bash
+pip install feedparser plyer rich
+```
 
 ## 💻 Usage
 
-To start monitoring the Hacker News feed and receive notifications:
+To start the watcher, simply run the `main.py` script:
 
 ```bash
 python src/main.py
 ```
-*(Assuming your main script is named `main.py` inside the `src` folder. Adjust if your file name is different, e.g., `python src/notifier.py`)*
 
-The script will run continuously in your terminal. You can stop it by pressing `Ctrl+C`.
+The script will clear the console, display a header, and begin checking the RSS feed every **5 minutes** (300 seconds) in a continuous loop.
 
-### Configuration
+Press **`Ctrl+C`** at any time to stop the watcher.
 
-You can customize the maximum number of notifications per hour by modifying the `MAX_POSTS_PER_HOUR` variable in `src/main.py` (or your script file):
+## ⚙️ Configuration
 
-```python
-# Customizable max number of notifications per hour
-MAX_POSTS_PER_HOUR = 3 # Change this value as needed
+The watcher's behavior can be easily adjusted by modifying the global variables at the top of `src/main.py`:
+
+| Variable | Default Value | Description |
+| :--- | :--- | :--- |
+| `RSS_URL` | `"https://news.ycombinator.com/rss"` | The RSS feed to monitor. |
+| `MAX_POSTS_PER_HOUR` | `1` | **Crucial rate limit:** Maximum number of posts for which notifications will be sent within a 60-minute window. |
+| `CHECK_INTERVAL` | `300` | The time (in seconds) between each check of the RSS feed (5 minutes). |
+
+## 💡 Technical Notes
+
+The project uses the following libraries:
+
+  * **`feedparser`**: To parse the XML content of the RSS feed.
+  * **`plyer`**: For cross-platform desktop notifications.
+  * **`rich`**: For enhanced terminal output, custom colors, links, and the smooth waiting animation.
+  * **`datetime` / `timedelta`**: For precise rate-limiting and tracking of the hourly quota.
+
+<!-- end list -->
+
 ```
-
----
-
-## 🔁 Running as a Systemd Background Service
-
-For continuous, unattended operation on Linux systems, you can configure the HackerNews Notifier to run as a **systemd service**. This ensures the script starts automatically on boot and restarts if it crashes.
-
-1.  **Create a systemd service file:**
-    Create a file named `hackernews_rss.service` in `/etc/systemd/system/`. You'll need root privileges for this (e.g., `sudo nano /etc/systemd/system/hackernews_rss.service`).
-
-2.  **Add the following content to the file:**
-
-    ```ini
-    [Unit]
-    Description=HackerNews RSS Feed Notifier
-    After=network.target
-
-    [Service]
-    Type=simple
-    User=[YOUR_LINUX_USERNAME] # e.g., swiz13
-    WorkingDirectory=[ABSOLUTE_PATH_TO_YOUR_PROJECT_SRC_DIRECTORY] # e.g., /home/swiz13/projects/hackernews-notifier/src
-    ExecStart=[ABSOLUTE_PATH_TO_YOUR_PYTHON_EXECUTABLE] [YOUR_SCRIPT_NAME.py] # e.g., /home/swiz13/miniconda3/envs/check_hackernews_rss/bin/python main.py
-    Restart=always
-    RestartSec=10
-    Environment=DISPLAY=:0
-    Environment=XAUTHORITY=[ABSOLUTE_PATH_TO_YOUR_XAUTHORITY_FILE] # e.g., /home/swiz13/.Xauthority
-
-    [Install]
-    WantedBy=default.target
-    ```
-
-    **Remember to replace these placeholders:**
-    * `[YOUR_LINUX_USERNAME]`: Your Linux user account name.
-    * `[ABSOLUTE_PATH_TO_YOUR_PROJECT_SRC_DIRECTORY]`: The full path to the `src` directory within your cloned project.
-    * `[ABSOLUTE_PATH_TO_YOUR_PYTHON_EXECUTABLE]`: The full path to the Python interpreter you want to use (e.g., from your conda environment or `/usr/bin/python3`).
-    * `[YOUR_SCRIPT_NAME.py]`: The name of your main Python script (e.g., `main.py` or `notifier.py`).
-    * `[ABSOLUTE_PATH_TO_YOUR_XAUTHORITY_FILE]`: The full path to your `.Xauthority` file, typically found in your home directory (e.g., `/home/your_username/.Xauthority`). This is vital for desktop notifications to work when run as a background service.
-
-3.  **Reload systemd and manage the service:**
-
-    After creating the file, reload systemd to recognize the new service, then enable and start it:
-
-    ```bash
-    sudo systemctl daemon-reload
-    sudo systemctl enable hackernews_rss.service
-    sudo systemctl start hackernews_rss.service
-    ```
-
-4.  **Check the service status (optional):**
-
-    You can verify if the service is running correctly:
-
-    ```bash
-    sudo systemctl status hackernews_rss.service
-    ```
-
-This setup allows your notifier to run reliably in the background, providing Hacker News updates without needing a terminal window open.
-
----
-
-## ⚠️ Limitations
-
-* This is a command-line script and does not have a graphical user interface (GUI).
-* Notifications depend on your operating system's native notification system (handled by `plyer`).
-
-## 📄 License
-
-Distributed under the MIT License. See the `LICENSE` file for more information.
-
-## ✉️ Contact
-
-Salomon Metre - [kulosmetros088@gmail.ccom](mailto:kulosmetros088@gmail.com)
+```
