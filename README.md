@@ -1,8 +1,3 @@
-That's a neat and functional script\! Based on your Python code for a Hacker News RSS watcher, here is a succinct, correct, and comprehensive `README.md`.
-
-I've structured it for immediate clarity on GitHub, including setup, usage, and key features.
-
-````markdown
 # 📰 Hacker News Notifier
 
 A highly focused and rate-limited Python script to monitor the Hacker News RSS feed and deliver desktop notifications for new stories. This project is built using `feedparser`, `plyer`, and `rich` for a clean, reliable, and visually appealing console experience.
@@ -67,5 +62,3 @@ The project uses the following libraries:
   * **`rich`**: For enhanced terminal output, custom colors, links, and the smooth waiting animation.
   * **`datetime` / `timedelta`**: For precise rate-limiting and tracking of the hourly quota.
 
-<!-- end list -->
-```
