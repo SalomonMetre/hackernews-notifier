@@ -27,8 +27,19 @@ cd hackernews-notifier
 
 The script relies on a few key Python libraries:
 
+- Create Virtual Environment
+```bash
+python -m venv .venv
+source .venv/bin/activate  # On Windows: .venv\Scripts\activate
+```
+- Install packages
 ```bash
 pip install feedparser plyer rich
+```
+OR
+
+```bash
+pip install -r requirements.txt
 ```
 
 ## 💻 Usage
